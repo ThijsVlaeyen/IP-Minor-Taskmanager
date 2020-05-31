@@ -33,7 +33,7 @@ public class DateTimeFormatterTest {
     }
     @Test
     public void dateTimeFormatterTestPrint(){
-        LocalDateTime time = LocalDateTime.of(2011,12,3,10,15,30);
+        LocalDateTime time = LocalDateTime.of(2018,11,4,5,7,33);
         String datum = 	"2018-11-04 05:07:33";
         assertEquals(formatter.print(time,Locale.ENGLISH),datum);
     }
