@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +62,8 @@ public class Task {
     }
 
     public String deadlineToString(){
-        DateFormatter formatter =new DateFormatter();
-        return formatter.print(deadline, null);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return deadline.format(formatter);
     }
 
     public void setId(long id){
@@ -71,10 +72,6 @@ public class Task {
 
     public String getDescription() {
         return description;
-    }
-
-    public String toString(){
-        return name + " " + this.deadlineToString();
     }
 
     public void addSubTask(SubTask t){

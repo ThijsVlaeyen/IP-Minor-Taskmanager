@@ -1,11 +1,15 @@
 package be.ucll.Taskmanager.DTO;
 
+import be.ucll.Taskmanager.Domain.Task;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 public class SubTaskDTO {
     private long id;
-    private long taskid;
+    @JsonIgnore
+    private Task task;
     @NotNull(message = "Name cannot be emtpy")
     @NotEmpty(message = "Name cannot be empty")
     private String name;
@@ -42,16 +46,8 @@ public class SubTaskDTO {
         return this.name;
     }
 
-    public boolean isCompleted(){
-        return this.completed;
-    }
+    public Task getTask(){return this.task;}
 
-    public void setCompleted(boolean completed){
-        this.completed = completed;
-    }
-
-    public long getTaskid(){return this.taskid;}
-
-    public void setTaskid(long taskid){this.taskid = taskid;}
+    public void setTask(Task task){this.task = task;}
 
 }

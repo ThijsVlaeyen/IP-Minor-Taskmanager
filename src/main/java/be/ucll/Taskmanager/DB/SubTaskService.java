@@ -2,18 +2,29 @@ package be.ucll.Taskmanager.DB;
 
 import be.ucll.Taskmanager.DTO.SubTaskDTO;
 import be.ucll.Taskmanager.Domain.SubTask;
+import be.ucll.Taskmanager.Domain.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static be.ucll.Taskmanager.Domain.DTOFormatter.DTOToSubtask;
+import static be.ucll.Taskmanager.Domain.DTOFormatter.createDTOfromSubtask;
+
 @Service
 public class SubTaskService {
-    @Autowired
     SubTaskRepository repository;
 
-    public void add(SubTaskDTO dto){
-        repository.save(toEntity(dto));
+    @Autowired
+    public SubTaskService(SubTaskRepository repository){
+        this.repository = repository;
+    }
+
+    public SubTaskDTO add(SubTaskDTO dto){
+        repository.save(DTOToSubtask(dto));
+        return dto;
     }
 
     public void delete(long id){
@@ -21,31 +32,24 @@ public class SubTaskService {
     }
 
     public void update(SubTaskDTO dto){
-        SubTask s = toEntity(dto);
-        System.out.println(s.getName() + s.getDescription() + s.isCompleted() + s.getTaskid() + s.getId());
-        repository.update(s.getName(),s.getDescription(),s.isCompleted(),s.getTaskid(),s.getId());
+        repository.update(dto.getName(),dto.getDescription(),dto.getTask(),dto.getId());
     }
 
-    public List<SubTask> getAll(long id){
-        return repository.getAllSubTaskByTaskid(id);
+    public List<SubTaskDTO> getAll(Task task){
+        List<SubTaskDTO> result = new ArrayList<>();
+        for (SubTask t : repository.findByTask(task)){
+            t.setTask(null);
+            result.add(createDTOfromSubtask(t));
+        }
+        return result;
     }
 
     public List<SubTask> getAll(){
         return repository.findAll();
     }
 
-    public SubTask get(long  id){
+    public SubTaskDTO get(long  id){
         Optional<SubTask> optionalSubTask = repository.findById(id);
-        return optionalSubTask.orElseThrow(() -> new DbException("subtask not found"));
-    }
-
-    public SubTask toEntity(SubTaskDTO dto){
-        SubTask subTask = new SubTask();
-        subTask.setId(dto.getId());
-        subTask.setTaskid(dto.getTaskid());
-        subTask.setName(dto.getName());
-        subTask.setDescription(dto.getDescription());
-        subTask.setCompleted(dto.isCompleted());
-        return subTask;
+        return createDTOfromSubtask(optionalSubTask.orElseThrow(() -> new DbException("subtask not found")));
     }
 }

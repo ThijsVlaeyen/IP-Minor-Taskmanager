@@ -1,8 +1,10 @@
 package be.ucll.Taskmanager.Domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -15,14 +17,19 @@ public class SubTask {
     @GeneratedValue
     private long id;
 
-    private long taskid;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(nullable = false)
+    @JsonIgnore
+    private Task task;
+
     @NotNull(message = "Name cannot be emtpy")
     @NotEmpty(message = "Name cannot be empty")
     private String name;
+
     @NotNull(message = "description cannot be empty")
     @NotEmpty(message = "description cannot be empty")
     private String description;
-    private boolean completed = false;
 
     public SubTask(String name, String description) {
         this.name = name;
@@ -59,19 +66,11 @@ public class SubTask {
         return this.name;
     }
 
-    public boolean isCompleted(){
-        return this.completed;
+    public void setTask(Task task){
+        this.task = task;
     }
 
-    public void setCompleted(boolean completed){
-        this.completed = completed;
-    }
-
-    public void setTaskid(long taskid){
-        this.taskid = taskid;
-    }
-
-    public long getTaskid(){
-        return this.taskid;
+    public Task getTask(){
+        return this.task;
     }
 }
